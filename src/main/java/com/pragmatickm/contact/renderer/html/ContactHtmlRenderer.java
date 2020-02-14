@@ -1,6 +1,6 @@
 /*
  * pragmatickm-contact-renderer-html - Contacts rendered as HTML in a Servlet environment.
- * Copyright (C) 2013, 2014, 2015, 2016, 2017  AO Industries, Inc.
+ * Copyright (C) 2013, 2014, 2015, 2016, 2017, 2020  AO Industries, Inc.
  *     support@aoindustries.com
  *     7262 Bull Pen Cir
  *     Mobile, AL 36695
@@ -26,8 +26,8 @@ import com.aoindustries.encoding.Coercion;
 import com.aoindustries.encoding.MediaWriter;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.textInXhtmlAttributeEncoder;
-import static com.aoindustries.encoding.TextInXhtmlEncoder.encodeTextInXhtml;
 import static com.aoindustries.encoding.TextInXhtmlEncoder.textInXhtmlEncoder;
+import com.aoindustries.html.Html;
 import com.aoindustries.io.buffer.BufferResult;
 import com.aoindustries.net.Email;
 import com.pragmatickm.contact.model.Address;
@@ -41,42 +41,41 @@ import com.semanticcms.core.model.ElementContext;
 import com.semanticcms.core.model.NodeBodyWriter;
 import com.semanticcms.core.renderer.html.PageIndex;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.List;
 
 final public class ContactHtmlRenderer {
 
-	private static void writeRow(String header, String value, Writer out) throws IOException {
+	private static void writeRow(String header, String value, Html html) throws IOException {
 		if(value != null) {
-			out.write("<tr><th>");
-			encodeTextInXhtml(header, out);
-			out.write("</th><td colspan=\"2\">");
-			encodeTextInXhtml(value, out);
-			out.write("</td></tr>\n");
+			html.out.write("<tr><th>");
+			html.text(header);
+			html.out.write("</th><td colspan=\"2\">");
+			html.text(value);
+			html.out.write("</td></tr>\n");
 		}
 	}
 
 	public static void writeContactTable(
 		PageIndex pageIndex,
-		Writer out,
+		Html html,
 		ElementContext context,
 		Object style,
 		Contact contact
 	) throws IOException {
-		out.write("<table id=\"");
+		html.out.write("<table id=\"");
 		PageIndex.appendIdInPage(
 			pageIndex,
 			contact.getPage(),
 			contact.getId(),
-			new MediaWriter(textInXhtmlAttributeEncoder, out)
+			new MediaWriter(textInXhtmlAttributeEncoder, html.out)
 		);
-		out.write("\" class=\"thinTable contactTable\"");
+		html.out.write("\" class=\"thinTable contactTable\"");
 		if(style != null) {
-			out.write(" style=\"");
-			Coercion.write(style, textInXhtmlAttributeEncoder, out);
-			out.write('"');
+			html.out.write(" style=\"");
+			Coercion.write(style, textInXhtmlAttributeEncoder, html.out);
+			html.out.write('"');
 		}
-		out.write(">\n");
+		html.out.write(">\n");
 		String title = contact.getTitle();
 		String first = contact.getFirst();
 		String middle = contact.getMiddle();
@@ -110,100 +109,100 @@ final public class ContactHtmlRenderer {
 			|| !webPages.isEmpty()
 			|| addresses.isEmpty() // When no addresses, always display with a full contact header
 		) {
-			out.write("<thead><tr><th class=\"contactTableHeader\" colspan=\"3\"><div>");
-			contact.appendLabel(new MediaWriter(textInXhtmlEncoder, out));
-			out.write("</div></th></tr></thead>\n");
+			html.out.write("<thead><tr><th class=\"contactTableHeader\" colspan=\"3\"><div>");
+			contact.appendLabel(new MediaWriter(textInXhtmlEncoder, html.out));
+			html.out.write("</div></th></tr></thead>\n");
 		}
-		out.write("<tbody>\n");
-		writeRow("Title:", title, out);
-		writeRow("First:", first, out);
-		writeRow("Middle:", middle, out);
-		writeRow("Nick:", nick, out);
-		writeRow("Last:", last, out);
-		writeRow("Maiden:", maiden, out);
-		writeRow("Suffix:", suffix, out);
-		writeRow("Company:", company, out);
-		writeRow("Department:", department, out);
-		writeRow("Job Title:", jobTitle, out);
+		html.out.write("<tbody>\n");
+		writeRow("Title:", title, html);
+		writeRow("First:", first, html);
+		writeRow("Middle:", middle, html);
+		writeRow("Nick:", nick, html);
+		writeRow("Last:", last, html);
+		writeRow("Maiden:", maiden, html);
+		writeRow("Suffix:", suffix, html);
+		writeRow("Company:", company, html);
+		writeRow("Department:", department, html);
+		writeRow("Job Title:", jobTitle, html);
 		for(Email email : emails) {
 			String emailString = email.toString();
-			out.write("<tr><th>Email:</th><td colspan=\"2\"><div class=\"contact_email_address\"><a href=\"mailto:");
-			encodeTextInXhtmlAttribute(emailString, out);
-			out.write("\">");
-			encodeTextInXhtml(emailString, out);
-			out.write("</a></div></td></tr>\n");
+			html.out.write("<tr><th>Email:</th><td colspan=\"2\"><div class=\"contact_email_address\"><a href=\"mailto:");
+			encodeTextInXhtmlAttribute(emailString, html.out);
+			html.out.write("\">");
+			html.text(emailString);
+			html.out.write("</a></div></td></tr>\n");
 		}
 		for(PhoneNumber phoneNumber : phoneNumbers) {
 			PhoneType type = phoneNumber.getType();
 			String number = phoneNumber.getNumber();
 			String comment = phoneNumber.getComment();
-			out.write("<tr><th>");
-			encodeTextInXhtml(type.getLabel(), out);
-			out.write(":</th><td");
-			if(comment==null) out.write(" colspan=\"2\"");
-			out.write("><div class=\"");
-			encodeTextInXhtmlAttribute(type.getCssClass(), out);
-			out.write("\"><a href=\"tel:");
-			encodeTextInXhtmlAttribute(number.replace(' ', '-'), out);
-			out.write("\">");
-			encodeTextInXhtml(number, out);
-			out.write("</a></div></td>");
+			html.out.write("<tr><th>");
+			html.text(type.getLabel());
+			html.out.write(":</th><td");
+			if(comment==null) html.out.write(" colspan=\"2\"");
+			html.out.write("><div class=\"");
+			encodeTextInXhtmlAttribute(type.getCssClass(), html.out);
+			html.out.write("\"><a href=\"tel:");
+			encodeTextInXhtmlAttribute(number.replace(' ', '-'), html.out);
+			html.out.write("\">");
+			html.text(number);
+			html.out.write("</a></div></td>");
 			if(comment!=null) {
-				out.write("<td>");
-				encodeTextInXhtml(comment, out);
-				out.write("</td>");
+				html.out.write("<td>");
+				html.text(comment);
+				html.out.write("</td>");
 			}
-			out.write("</tr>\n");
+			html.out.write("</tr>\n");
 		}
 		for(Im im : ims) {
 			ImType type = im.getType();
 			String handle = im.getHandle();
 			String comment = im.getComment();
-			out.write("<tr><th>");
-			encodeTextInXhtml(type.getLabel(), out);
-			out.write(":</th><td");
-			if(comment==null) out.write(" colspan=\"2\"");
-			out.write("><div class=\"");
-			encodeTextInXhtmlAttribute(type.getCssClass(), out);
-			out.write("\">");
-			encodeTextInXhtml(handle, out);
-			out.write("</div></td>");
+			html.out.write("<tr><th>");
+			html.text(type.getLabel());
+			html.out.write(":</th><td");
+			if(comment==null) html.out.write(" colspan=\"2\"");
+			html.out.write("><div class=\"");
+			encodeTextInXhtmlAttribute(type.getCssClass(), html.out);
+			html.out.write("\">");
+			html.text(handle);
+			html.out.write("</div></td>");
 			if(comment!=null) {
-				out.write("<td>");
-				encodeTextInXhtml(comment, out);
-				out.write("</td>");
+				html.out.write("<td>");
+				html.text(comment);
+				html.out.write("</td>");
 			}
-			out.write("</tr>\n");
+			html.out.write("</tr>\n");
 		}
 		for(String webPage : webPages) {
-			out.write("<tr><th>Web Page:</th><td colspan=\"2\"><div class=\"contact_web_page\"><a href=\"");
-			encodeTextInXhtmlAttribute(webPage, out);
-			out.write("\">");
-			encodeTextInXhtml(webPage, out);
-			out.write("</a></div></td></tr>\n");
+			html.out.write("<tr><th>Web Page:</th><td colspan=\"2\"><div class=\"contact_web_page\"><a href=\"");
+			encodeTextInXhtmlAttribute(webPage, html.out);
+			html.out.write("\">");
+			html.text(webPage);
+			html.out.write("</a></div></td></tr>\n");
 		}
 		for(Address address : addresses) {
 			AddressType type = address.getType();
-			out.write("<tr><th class=\"");
-			encodeTextInXhtmlAttribute(type.getCssClass(), out);
-			out.write("\" colspan=\"3\"><div>");
-			encodeTextInXhtml(type.getLabel(), out);
-			out.write("</div></th></tr>\n");
-			writeRow("Address 1:", address.getAddress1(), out);
-			writeRow("Address 2:", address.getAddress2(), out);
-			writeRow("City:", address.getCity(), out);
-			writeRow("State/Prov:", address.getStateProv(), out);
-			writeRow("ZIP/Postal:", address.getZipPostal(), out);
-			writeRow("Country:", address.getCountry(), out);
-			writeRow("Comment:", address.getComment(), out);
+			html.out.write("<tr><th class=\"");
+			encodeTextInXhtmlAttribute(type.getCssClass(), html.out);
+			html.out.write("\" colspan=\"3\"><div>");
+			html.text(type.getLabel());
+			html.out.write("</div></th></tr>\n");
+			writeRow("Address 1:", address.getAddress1(), html);
+			writeRow("Address 2:", address.getAddress2(), html);
+			writeRow("City:", address.getCity(), html);
+			writeRow("State/Prov:", address.getStateProv(), html);
+			writeRow("ZIP/Postal:", address.getZipPostal(), html);
+			writeRow("Country:", address.getCountry(), html);
+			writeRow("Comment:", address.getComment(), html);
 		}
 		BufferResult body = contact.getBody();
 		if(body.getLength() > 0) {
-			out.write("<tr><td class=\"contactBody\" colspan=\"3\">");
-			body.writeTo(new NodeBodyWriter(contact, out, context));
-			out.write("</td></tr>\n");
+			html.out.write("<tr><td class=\"contactBody\" colspan=\"3\">");
+			body.writeTo(new NodeBodyWriter(contact, html.out, context));
+			html.out.write("</td></tr>\n");
 		}
-		out.write("</tbody>\n"
+		html.out.write("</tbody>\n"
 				+ "</table>");
 	}
 
