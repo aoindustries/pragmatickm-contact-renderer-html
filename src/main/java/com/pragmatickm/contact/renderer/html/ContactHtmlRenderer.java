@@ -69,7 +69,7 @@ final public class ContactHtmlRenderer {
 			contact.getId(),
 			new MediaWriter(textInXhtmlAttributeEncoder, html.out)
 		);
-		html.out.write("\" class=\"thinTable contactTable\"");
+		html.out.write("\" class=\"ao-grid contactTable\"");
 		if(style != null) {
 			html.out.write(" style=\"");
 			Coercion.write(style, textInXhtmlAttributeEncoder, html.out);
