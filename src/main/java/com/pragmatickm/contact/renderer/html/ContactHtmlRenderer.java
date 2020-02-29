@@ -69,7 +69,7 @@ final public class ContactHtmlRenderer {
 			contact.getId(),
 			new MediaWriter(textInXhtmlAttributeEncoder, html.out)
 		);
-		html.out.write("\" class=\"ao-grid contactTable\"");
+		html.out.write("\" class=\"ao-grid pragmatickm-contact\"");
 		if(style != null) {
 			html.out.write(" style=\"");
 			Coercion.write(style, textInXhtmlAttributeEncoder, html.out);
@@ -109,7 +109,7 @@ final public class ContactHtmlRenderer {
 			|| !webPages.isEmpty()
 			|| addresses.isEmpty() // When no addresses, always display with a full contact header
 		) {
-			html.out.write("<thead><tr><th class=\"contactTableHeader\" colspan=\"3\"><div>");
+			html.out.write("<thead><tr><th colspan=\"3\"><div>");
 			contact.appendLabel(new MediaWriter(textInXhtmlEncoder, html.out));
 			html.out.write("</div></th></tr></thead>\n");
 		}
@@ -126,7 +126,7 @@ final public class ContactHtmlRenderer {
 		writeRow("Job Title:", jobTitle, html);
 		for(Email email : emails) {
 			String emailString = email.toString();
-			html.out.write("<tr><th>Email:</th><td colspan=\"2\"><div class=\"contact_email_address\"><a href=\"mailto:");
+			html.out.write("<tr><th>Email:</th><td colspan=\"2\"><div class=\"pragmatickm-contact-email\"><a href=\"mailto:");
 			encodeTextInXhtmlAttribute(emailString, html.out);
 			html.out.write("\">");
 			html.text(emailString);
@@ -175,7 +175,7 @@ final public class ContactHtmlRenderer {
 			html.out.write("</tr>\n");
 		}
 		for(String webPage : webPages) {
-			html.out.write("<tr><th>Web Page:</th><td colspan=\"2\"><div class=\"contact_web_page\"><a href=\"");
+			html.out.write("<tr><th>Web Page:</th><td colspan=\"2\"><div class=\"pragmatickm-contact-web-page\"><a href=\"");
 			encodeTextInXhtmlAttribute(webPage, html.out);
 			html.out.write("\">");
 			html.text(webPage);
@@ -198,7 +198,7 @@ final public class ContactHtmlRenderer {
 		}
 		BufferResult body = contact.getBody();
 		if(body.getLength() > 0) {
-			html.out.write("<tr><td class=\"contactBody\" colspan=\"3\">");
+			html.out.write("<tr><td class=\"pragmatickm-contact-body\" colspan=\"3\">");
 			body.writeTo(new NodeBodyWriter(contact, html.out, context));
 			html.out.write("</td></tr>\n");
 		}
