@@ -26,7 +26,6 @@ import com.aoindustries.encoding.Coercion;
 import com.aoindustries.encoding.MediaWriter;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
 import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.textInXhtmlAttributeEncoder;
-import static com.aoindustries.encoding.TextInXhtmlEncoder.textInXhtmlEncoder;
 import com.aoindustries.html.Html;
 import com.aoindustries.io.buffer.BufferResult;
 import com.aoindustries.net.Email;
@@ -110,7 +109,7 @@ final public class ContactHtmlRenderer {
 			|| addresses.isEmpty() // When no addresses, always display with a full contact header
 		) {
 			html.out.write("<thead><tr><th colspan=\"3\"><div>");
-			contact.appendLabel(new MediaWriter(textInXhtmlEncoder, html.out));
+			html.text(contact.getLabel());
 			html.out.write("</div></th></tr></thead>\n");
 		}
 		html.out.write("<tbody>\n");
