@@ -35,8 +35,6 @@ along with pragmatickm-contact-renderer-html.  If not, see <http://www.gnu.org/l
 	<properties>
 		<!-- These values are copied from the project being documented -->
 		<documented.artifactId>pragmatickm-contact-renderer-html</documented.artifactId>
-		<documented.javaVersion>1.8</documented.javaVersion>
-		<documented.javac.link.javaApi>${javac.link.javaApi.jdk8}</documented.javac.link.javaApi>
 		<documented.name>PragmaticKM Contact Renderer HTML²</documented.name>
 		<documented.shortTitle>Renderer HTML</documented.shortTitle>
 		<documented.description>Contacts rendered as HTML in a Servlet environment.</documented.description>
