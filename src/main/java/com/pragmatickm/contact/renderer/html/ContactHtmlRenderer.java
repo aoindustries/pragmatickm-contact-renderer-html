@@ -66,7 +66,7 @@ final public class ContactHtmlRenderer {
 			pageIndex,
 			contact.getPage(),
 			contact.getId(),
-			new MediaWriter(textInXhtmlAttributeEncoder, html.out)
+			new MediaWriter(html.encodingContext, textInXhtmlAttributeEncoder, html.out)
 		);
 		html.out.write("\" class=\"ao-grid pragmatickm-contact\"");
 		if(style != null) {
