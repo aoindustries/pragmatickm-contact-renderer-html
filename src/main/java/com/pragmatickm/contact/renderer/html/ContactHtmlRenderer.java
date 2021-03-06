@@ -22,12 +22,9 @@
  */
 package com.pragmatickm.contact.renderer.html;
 
-import com.aoindustries.encoding.MediaWriter;
-import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.encodeTextInXhtmlAttribute;
-import static com.aoindustries.encoding.TextInXhtmlAttributeEncoder.textInXhtmlAttributeEncoder;
-import com.aoindustries.html.Document;
+import com.aoindustries.html.PalpableContent;
+import com.aoindustries.html.TR_factory;
 import com.aoindustries.io.buffer.BufferResult;
-import com.aoindustries.lang.Coercion;
 import com.aoindustries.net.Email;
 import com.pragmatickm.contact.model.Address;
 import com.pragmatickm.contact.model.AddressType;
@@ -44,165 +41,163 @@ import java.util.List;
 
 final public class ContactHtmlRenderer {
 
-	private static void writeRow(String header, String value, Document document) throws IOException {
+	private static void writeRow(String header, String value, TR_factory<?> factory) throws IOException {
 		if(value != null) {
-			document.out.write("<tr><th>");
-			document.text(header);
-			document.out.write("</th><td colspan=\"2\">");
-			document.text(value);
-			document.out.write("</td></tr>\n");
+			factory.tr__(tr -> tr
+				.th__(header)
+				.td().colspan(2).__(value)
+			);
 		}
 	}
 
-	public static void writeContactTable(
+	public static <__ extends PalpableContent<__>> void writeContactTable(
 		PageIndex pageIndex,
-		Document document,
+		__ content,
 		ElementContext context,
 		Object style,
 		Contact contact
 	) throws IOException {
-		document.out.write("<table id=\"");
-		PageIndex.appendIdInPage(
-			pageIndex,
-			contact.getPage(),
-			contact.getId(),
-			new MediaWriter(document.encodingContext, textInXhtmlAttributeEncoder, document.out)
-		);
-		document.out.write("\" class=\"ao-grid pragmatickm-contact\"");
-		if(style != null) {
-			document.out.write(" style=\"");
-			Coercion.write(style, textInXhtmlAttributeEncoder, document.out);
-			document.out.write('"');
-		}
-		document.out.write(">\n");
-		String title = contact.getTitle();
-		String first = contact.getFirst();
-		String middle = contact.getMiddle();
-		String nick = contact.getNick();
-		String last = contact.getLast();
-		String maiden = contact.getMaiden();
-		String suffix = contact.getSuffix();
-		String jobTitle = contact.getJobTitle();
-		String company = contact.getCompany();
-		String department = contact.getDepartment();
-		List<Email> emails = contact.getEmails();
-		List<PhoneNumber> phoneNumbers = contact.getPhoneNumbers();
-		List<Im> ims = contact.getIms();
-		List<String> webPages = contact.getWebPages();
-		List<Address> addresses = contact.getAddresses();
-		// Hide header for address-only view
-		if(
-			title != null
-			|| first != null
-			|| middle != null
-			|| nick != null
-			|| last != null
-			|| maiden != null
-			|| suffix != null
-			|| jobTitle != null
-			|| company != null
-			|| department != null
-			|| !emails.isEmpty()
-			|| !phoneNumbers.isEmpty()
-			|| !ims.isEmpty()
-			|| !webPages.isEmpty()
-			|| addresses.isEmpty() // When no addresses, always display with a full contact header
-		) {
-			document.out.write("<thead><tr><th colspan=\"3\"><div>");
-			document.text(contact.getLabel());
-			document.out.write("</div></th></tr></thead>\n");
-		}
-		document.out.write("<tbody>\n");
-		writeRow("Title:", title, document);
-		writeRow("First:", first, document);
-		writeRow("Middle:", middle, document);
-		writeRow("Nick:", nick, document);
-		writeRow("Last:", last, document);
-		writeRow("Maiden:", maiden, document);
-		writeRow("Suffix:", suffix, document);
-		writeRow("Company:", company, document);
-		writeRow("Department:", department, document);
-		writeRow("Job Title:", jobTitle, document);
-		for(Email email : emails) {
-			String emailString = email.toString();
-			document.out.write("<tr><th>Email:</th><td colspan=\"2\"><div class=\"pragmatickm-contact-email\"><a href=\"mailto:");
-			encodeTextInXhtmlAttribute(emailString, document.out);
-			document.out.write("\">");
-			document.text(emailString);
-			document.out.write("</a></div></td></tr>\n");
-		}
-		for(PhoneNumber phoneNumber : phoneNumbers) {
-			PhoneType type = phoneNumber.getType();
-			String number = phoneNumber.getNumber();
-			String comment = phoneNumber.getComment();
-			document.out.write("<tr><th>");
-			document.text(type.getLabel());
-			document.out.write(":</th><td");
-			if(comment==null) document.out.write(" colspan=\"2\"");
-			document.out.write("><div class=\"");
-			encodeTextInXhtmlAttribute(type.getCssClass(), document.out);
-			document.out.write("\"><a href=\"tel:");
-			encodeTextInXhtmlAttribute(number.replace(' ', '-'), document.out);
-			document.out.write("\">");
-			document.text(number);
-			document.out.write("</a></div></td>");
-			if(comment!=null) {
-				document.out.write("<td>");
-				document.text(comment);
-				document.out.write("</td>");
+		content.table()
+			.id(idAttr -> PageIndex.appendIdInPage(
+				pageIndex,
+				contact.getPage(),
+				contact.getId(),
+				idAttr
+			))
+			.clazz("ao-grid", "pragmatickm-contact")
+			.style(style)
+		.__(table -> {
+			String title = contact.getTitle();
+			String first = contact.getFirst();
+			String middle = contact.getMiddle();
+			String nick = contact.getNick();
+			String last = contact.getLast();
+			String maiden = contact.getMaiden();
+			String suffix = contact.getSuffix();
+			String jobTitle = contact.getJobTitle();
+			String company = contact.getCompany();
+			String department = contact.getDepartment();
+			List<Email> emails = contact.getEmails();
+			List<PhoneNumber> phoneNumbers = contact.getPhoneNumbers();
+			List<Im> ims = contact.getIms();
+			List<String> webPages = contact.getWebPages();
+			List<Address> addresses = contact.getAddresses();
+			// Hide header for address-only view
+			if(
+				title != null
+				|| first != null
+				|| middle != null
+				|| nick != null
+				|| last != null
+				|| maiden != null
+				|| suffix != null
+				|| jobTitle != null
+				|| company != null
+				|| department != null
+				|| !emails.isEmpty()
+				|| !phoneNumbers.isEmpty()
+				|| !ims.isEmpty()
+				|| !webPages.isEmpty()
+				|| addresses.isEmpty() // When no addresses, always display with a full contact header
+			) {
+				table.thead__(thead -> thead
+					.tr__(tr -> tr
+						.th().colspan(3).__(th -> th
+							.div__(contact)
+						)
+					)
+				);
 			}
-			document.out.write("</tr>\n");
-		}
-		for(Im im : ims) {
-			ImType type = im.getType();
-			String handle = im.getHandle();
-			String comment = im.getComment();
-			document.out.write("<tr><th>");
-			document.text(type.getLabel());
-			document.out.write(":</th><td");
-			if(comment==null) document.out.write(" colspan=\"2\"");
-			document.out.write("><div class=\"");
-			encodeTextInXhtmlAttribute(type.getCssClass(), document.out);
-			document.out.write("\">");
-			document.text(handle);
-			document.out.write("</div></td>");
-			if(comment!=null) {
-				document.out.write("<td>");
-				document.text(comment);
-				document.out.write("</td>");
-			}
-			document.out.write("</tr>\n");
-		}
-		for(String webPage : webPages) {
-			document.out.write("<tr><th>Web Page:</th><td colspan=\"2\"><div class=\"pragmatickm-contact-web-page\"><a href=\"");
-			encodeTextInXhtmlAttribute(webPage, document.out);
-			document.out.write("\">");
-			document.text(webPage);
-			document.out.write("</a></div></td></tr>\n");
-		}
-		for(Address address : addresses) {
-			AddressType type = address.getType();
-			document.out.write("<tr><th class=\"");
-			encodeTextInXhtmlAttribute(type.getCssClass(), document.out);
-			document.out.write("\" colspan=\"3\"><div>");
-			document.text(type.getLabel());
-			document.out.write("</div></th></tr>\n");
-			writeRow("Address 1:", address.getAddress1(), document);
-			writeRow("Address 2:", address.getAddress2(), document);
-			writeRow("City:", address.getCity(), document);
-			writeRow("State/Prov:", address.getStateProv(), document);
-			writeRow("ZIP/Postal:", address.getZipPostal(), document);
-			writeRow("Country:", address.getCountry(), document);
-			writeRow("Comment:", address.getComment(), document);
-		}
-		BufferResult body = contact.getBody();
-		if(body.getLength() > 0) {
-			document.out.write("<tr><td class=\"pragmatickm-contact-body\" colspan=\"3\">");
-			body.writeTo(new NodeBodyWriter(contact, document.out, context));
-			document.out.write("</td></tr>\n");
-		}
-		document.out.write("</tbody>\n"
-				+ "</table>");
+			table.tbody__(tbody -> {
+				writeRow("Title:", title, tbody);
+				writeRow("First:", first, tbody);
+				writeRow("Middle:", middle, tbody);
+				writeRow("Nick:", nick, tbody);
+				writeRow("Last:", last, tbody);
+				writeRow("Maiden:", maiden, tbody);
+				writeRow("Suffix:", suffix, tbody);
+				writeRow("Company:", company, tbody);
+				writeRow("Department:", department, tbody);
+				writeRow("Job Title:", jobTitle, tbody);
+				for(Email email : emails) {
+					String emailString = email.toString();
+					tbody.tr__(tr -> tr
+						.th__("Email:")
+						.td().colspan(2).__(td -> td
+							.div().clazz("pragmatickm-contact-email").__(div -> div
+								.a("mailto:" + emailString).__(emailString)
+							)
+						)
+					);
+				}
+				for(PhoneNumber phoneNumber : phoneNumbers) {
+					PhoneType type = phoneNumber.getType();
+					String number = phoneNumber.getNumber();
+					String comment = phoneNumber.getComment();
+					tbody.tr__(tr -> {
+						tr.th__(th -> th
+							.text(type.getLabel()).text(':')
+						).td().colspan(comment == null ? 2 : 1).__(td -> td
+							.div().clazz(type.getCssClass()).__(div -> div
+								.a("tel:" + number.replace(' ', '-')).__(number)
+							)
+						);
+						if(comment != null) {
+							tr.td__(comment);
+						}
+					});
+				}
+				for(Im im : ims) {
+					ImType type = im.getType();
+					String handle = im.getHandle();
+					String comment = im.getComment();
+					tbody.tr__(tr -> {
+						tr.th__(th -> th
+							.text(type.getLabel()).text(':')
+						)
+						.td().colspan(comment == null ? 2 : 1).__(td -> td
+							.div().clazz(type.getCssClass()).__(handle)
+						);
+						if(comment != null) {
+							tr.td__(comment);
+						}
+					});
+				}
+				for(String webPage : webPages) {
+					tbody.tr__(tr -> tr
+						.th__("Web Page:")
+						.td().colspan(2).__(td -> td
+							.div().clazz("pragmatickm-contact-web-page").__(div -> div
+								.a(webPage).__(webPage)
+							)
+						)
+					);
+				}
+				for(Address address : addresses) {
+					AddressType type = address.getType();
+					tbody.tr__(tr -> tr
+						.th().clazz(type.getCssClass()).colspan(3).__(th -> th
+							.div__(type.getLabel())
+						)
+					);
+					writeRow("Address 1:", address.getAddress1(), tbody);
+					writeRow("Address 2:", address.getAddress2(), tbody);
+					writeRow("City:", address.getCity(), tbody);
+					writeRow("State/Prov:", address.getStateProv(), tbody);
+					writeRow("ZIP/Postal:", address.getZipPostal(), tbody);
+					writeRow("Country:", address.getCountry(), tbody);
+					writeRow("Comment:", address.getComment(), tbody);
+				}
+				BufferResult body = contact.getBody();
+				if(body.getLength() > 0) {
+					tbody.tr__(tr -> tr
+						.td().clazz("pragmatickm-contact-body").colspan(3).__(td ->
+							body.writeTo(new NodeBodyWriter(contact, td.getDocument().out, context))
+						)
+					);
+				}
+			});
+		});
 	}
 
 	/**
