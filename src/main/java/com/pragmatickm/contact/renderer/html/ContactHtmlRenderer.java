@@ -22,6 +22,7 @@
  */
 package com.pragmatickm.contact.renderer.html;
 
+import com.aoindustries.html.AnyDocument;
 import com.aoindustries.html.PalpableContent;
 import com.aoindustries.html.TR_factory;
 import com.aoindustries.io.buffer.BufferResult;
@@ -41,7 +42,7 @@ import java.util.List;
 
 final public class ContactHtmlRenderer {
 
-	private static void writeRow(String header, String value, TR_factory<?> factory) throws IOException {
+	private static void writeRow(String header, String value, TR_factory<?, ?> factory) throws IOException {
 		if(value != null) {
 			factory.tr__(tr -> tr
 				.th__(header)
@@ -50,7 +51,10 @@ final public class ContactHtmlRenderer {
 		}
 	}
 
-	public static <__ extends PalpableContent<__>> void writeContactTable(
+	public static <
+		D extends AnyDocument<D>,
+		__ extends PalpableContent<D, __>
+	> void writeContactTable(
 		PageIndex pageIndex,
 		__ content,
 		ElementContext context,
