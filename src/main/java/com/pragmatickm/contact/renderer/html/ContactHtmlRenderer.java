@@ -24,7 +24,7 @@ package com.pragmatickm.contact.renderer.html;
 
 import com.aoindustries.html.AnyDocument;
 import com.aoindustries.html.PalpableContent;
-import com.aoindustries.html.TR_factory;
+import com.aoindustries.html.Union_TBODY_THEAD_TFOOT;
 import com.aoindustries.io.buffer.BufferResult;
 import com.aoindustries.net.Email;
 import com.pragmatickm.contact.model.Address;
@@ -42,7 +42,7 @@ import java.util.List;
 
 final public class ContactHtmlRenderer {
 
-	private static void writeRow(String header, String value, TR_factory<?, ?> factory) throws IOException {
+	private static void writeRow(String header, String value, Union_TBODY_THEAD_TFOOT<?, ?> factory) throws IOException {
 		if(value != null) {
 			factory.tr__(tr -> tr
 				.th__(header)
@@ -196,7 +196,7 @@ final public class ContactHtmlRenderer {
 				if(body.getLength() > 0) {
 					tbody.tr__(tr -> tr
 						.td().clazz("pragmatickm-contact-body").colspan(3).__(td ->
-							body.writeTo(new NodeBodyWriter(contact, td.getDocument().out, context))
+							body.writeTo(new NodeBodyWriter(contact, td.getDocument().getUnsafe(), context))
 						)
 					);
 				}
