@@ -22,9 +22,9 @@
  */
 package com.pragmatickm.contact.renderer.html;
 
-import com.aoindustries.html.AnyDocument;
-import com.aoindustries.html.PalpableContent;
-import com.aoindustries.html.Union_TBODY_THEAD_TFOOT;
+import com.aoindustries.html.any.AnyDocument;
+import com.aoindustries.html.any.AnyPalpableContent;
+import com.aoindustries.html.any.AnyUnion_TBODY_THEAD_TFOOT;
 import com.aoindustries.io.buffer.BufferResult;
 import com.aoindustries.net.Email;
 import com.pragmatickm.contact.model.Address;
@@ -42,9 +42,9 @@ import java.util.List;
 
 final public class ContactHtmlRenderer {
 
-	private static void writeRow(String header, String value, Union_TBODY_THEAD_TFOOT<?, ?> factory) throws IOException {
+	private static void writeRow(String header, String value, AnyUnion_TBODY_THEAD_TFOOT<?, ?> factory) throws IOException {
 		if(value != null) {
-			factory.tr__(tr -> tr
+			factory.tr__any(tr -> tr
 				.th__(header)
 				.td().colspan(2).__(value)
 			);
@@ -53,7 +53,7 @@ final public class ContactHtmlRenderer {
 
 	public static <
 		D extends AnyDocument<D>,
-		__ extends PalpableContent<D, __>
+		__ extends AnyPalpableContent<D, __>
 	> void writeContactTable(
 		PageIndex pageIndex,
 		__ content,
@@ -104,15 +104,15 @@ final public class ContactHtmlRenderer {
 				|| !webPages.isEmpty()
 				|| addresses.isEmpty() // When no addresses, always display with a full contact header
 			) {
-				table.thead__(thead -> thead
-					.tr__(tr -> tr
+				table.thead__any(thead -> thead
+					.tr__any (tr -> tr
 						.th().colspan(3).__(th -> th
 							.div__(contact)
 						)
 					)
 				);
 			}
-			table.tbody__(tbody -> {
+			table.tbody__any(tbody -> {
 				writeRow("Title:", title, tbody);
 				writeRow("First:", first, tbody);
 				writeRow("Middle:", middle, tbody);
@@ -125,7 +125,7 @@ final public class ContactHtmlRenderer {
 				writeRow("Job Title:", jobTitle, tbody);
 				for(Email email : emails) {
 					String emailString = email.toString();
-					tbody.tr__(tr -> tr
+					tbody.tr__any(tr -> tr
 						.th__("Email:")
 						.td().colspan(2).__(td -> td
 							.div().clazz("pragmatickm-contact-email").__(div -> div
@@ -138,8 +138,8 @@ final public class ContactHtmlRenderer {
 					PhoneType type = phoneNumber.getType();
 					String number = phoneNumber.getNumber();
 					String comment = phoneNumber.getComment();
-					tbody.tr__(tr -> {
-						tr.th__(th -> th
+					tbody.tr__any(tr -> {
+						tr.th__any(th -> th
 							.text(type.getLabel()).text(':')
 						).td().colspan(comment == null ? 2 : 1).__(td -> td
 							.div().clazz(type.getCssClass()).__(div -> div
@@ -155,8 +155,8 @@ final public class ContactHtmlRenderer {
 					ImType type = im.getType();
 					String handle = im.getHandle();
 					String comment = im.getComment();
-					tbody.tr__(tr -> {
-						tr.th__(th -> th
+					tbody.tr__any(tr -> {
+						tr.th__any(th -> th
 							.text(type.getLabel()).text(':')
 						)
 						.td().colspan(comment == null ? 2 : 1).__(td -> td
@@ -168,7 +168,7 @@ final public class ContactHtmlRenderer {
 					});
 				}
 				for(String webPage : webPages) {
-					tbody.tr__(tr -> tr
+					tbody.tr__any(tr -> tr
 						.th__("Web Page:")
 						.td().colspan(2).__(td -> td
 							.div().clazz("pragmatickm-contact-web-page").__(div -> div
@@ -179,7 +179,7 @@ final public class ContactHtmlRenderer {
 				}
 				for(Address address : addresses) {
 					AddressType type = address.getType();
-					tbody.tr__(tr -> tr
+					tbody.tr__any(tr -> tr
 						.th().clazz(type.getCssClass()).colspan(3).__(th -> th
 							.div__(type.getLabel())
 						)
@@ -194,7 +194,7 @@ final public class ContactHtmlRenderer {
 				}
 				BufferResult body = contact.getBody();
 				if(body.getLength() > 0) {
-					tbody.tr__(tr -> tr
+					tbody.tr__any(tr -> tr
 						.td().clazz("pragmatickm-contact-body").colspan(3).__(td ->
 							body.writeTo(new NodeBodyWriter(contact, td.getDocument().getUnsafe(), context))
 						)
