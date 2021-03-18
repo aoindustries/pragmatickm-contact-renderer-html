@@ -192,7 +192,7 @@ final public class ContactHtmlRenderer {
 				if(body.getLength() > 0) {
 					tbody.tr__any(tr -> tr
 						.td().clazz("pragmatickm-contact-body").colspan(3).__(td ->
-							body.writeTo(new NodeBodyWriter(contact, td.getDocument().getUnsafe(), context))
+							body.writeTo(new NodeBodyWriter(contact, td.getUnsafe(), context))
 						)
 					);
 				}
