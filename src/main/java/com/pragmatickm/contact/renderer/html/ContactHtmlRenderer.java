@@ -22,10 +22,10 @@
  */
 package com.pragmatickm.contact.renderer.html;
 
-import com.aoindustries.html.any.AnyPalpableContent;
-import com.aoindustries.html.any.AnyUnion_TBODY_THEAD_TFOOT;
-import com.aoindustries.io.buffer.BufferResult;
-import com.aoindustries.net.Email;
+import com.aoapps.html.any.AnyPalpableContent;
+import com.aoapps.html.any.AnyUnion_TBODY_THEAD_TFOOT;
+import com.aoapps.io.buffer.BufferResult;
+import com.aoapps.net.Email;
 import com.pragmatickm.contact.model.Address;
 import com.pragmatickm.contact.model.AddressType;
 import com.pragmatickm.contact.model.Contact;
