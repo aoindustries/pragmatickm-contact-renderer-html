@@ -9,6 +9,7 @@
 [![license: LGPL v3](https://pragmatickm.com/ao-badges/license-lgpl-3.0.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
 [![Build](https://github.com/aoindustries/pragmatickm-contact-renderer-html/workflows/Build/badge.svg?branch=master)](https://github.com/aoindustries/pragmatickm-contact-renderer-html/actions?query=workflow%3ABuild)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.pragmatickm/pragmatickm-contact-renderer-html/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.pragmatickm/pragmatickm-contact-renderer-html)
 
 [Contacts](https://github.com/aoindustries/pragmatickm-contact) rendered as HTML in a Servlet environment.
 
